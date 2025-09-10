@@ -1,0 +1,67 @@
+<!-- Declaration du type de document HTML5 -->
+<!DOCTYPE html>
+<!-- Element racine avec la langue francaise -->
+<html lang="fr">
+<head>
+    <!-- Encodage des caracteres en UTF-8 pour supporter les accents -->
+    <meta charset="UTF-8">
+    <!-- Titre de la page qui apparait dans l'onglet du navigateur -->
+    <title>Upload Image</title>
+</head>
+<body>
+    <!-- Titre principal de ma page web -->
+    <h1>Uploader une image vers le micro-service</h1>
+    
+    <!-- Formulaire pour selectionner et envoyer un fichier image -->
+    <form id="uploadForm">
+        <!-- Champ de saisie pour selectionner un fichier, obligatoire -->
+        <input type="file" id="fileInput" name="file" required />
+        <!-- Bouton pour declencher l'envoi du formulaire -->
+        <button type="submit">Uploader</button>
+    </form>
+    
+    <!-- Paragraphe pour afficher la reponse du serveur -->
+    <p id="response"></p>
+
+    <!-- Script JavaScript pour gerer l'upload de fichier -->
+    <script>
+        // Je recupere les elements HTML dont j'ai besoin
+        const form = document.getElementById('uploadForm');
+        const responseP = document.getElementById('response');
+
+        // J'ajoute un evenement qui se declenche quand le formulaire est soumis
+        form.addEventListener('submit', async (e) => {
+            // J'empeche le rechargement de la page lors de la soumission
+            e.preventDefault();
+            
+            // Je recupere l'element input file
+            const fileInput = document.getElementById('fileInput');
+            
+            // Je verifie qu'un fichier a ete selectionne
+            if (!fileInput.files.length) return alert("Sélectionnez un fichier.");
+
+            // Je cree un objet FormData pour envoyer le fichier
+            const formData = new FormData();
+            // J'ajoute le fichier selectionne dans FormData
+            formData.append('file', fileInput.files[0]);
+
+            // J'utilise try-catch pour gerer les erreurs de requete
+            try {
+                // J'envoie une requete POST vers mon API Spring Boot
+                const response = await fetch('/api/images/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // Je recupere la reponse du serveur sous forme de texte
+                const text = await response.text();
+                // J'affiche la reponse dans le paragraphe prevu
+                responseP.textContent = text;
+            } catch (error) {
+                // En cas d'erreur, j'affiche un message d'erreur
+                responseP.textContent = "Erreur lors de l'upload : " + error;
+            }
+        });
+    </script>
+</body>
+</html>
