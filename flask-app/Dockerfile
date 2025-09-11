@@ -27,5 +27,5 @@ EXPOSE 5000
 
 # 7) Commande (Gunicorn prod si "app" existe dans app.py ; sinon: python app.py)
 #    Décommente la ligne qui te convient :
-CMD ["python","app.py"]
-#CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "app:app"]
+#CMD ["python","app.py"]
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "app:app"]
