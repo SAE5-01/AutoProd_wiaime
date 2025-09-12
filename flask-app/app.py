@@ -7,9 +7,14 @@ from io import BytesIO
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Initialiser services
+# Initialiser les services
 image_service = ImageService(app.config['MONGO_URI'])
 email_service = EmailService(app)
+
+# Route par défaut pour éviter le 404 sur la racine (/)
+@app.route('/')
+def home():
+    return "Welcome to the Image Upload Service API"
 
 @app.route('/api/images/upload', methods=['POST'])
 def upload_image():
@@ -21,13 +26,16 @@ def upload_image():
         return jsonify({"error": "No selected file"}), 400
     
     try:
+        # Upload de l'image et récupération de l'ID
         image_id = image_service.upload_image(file)
-        # Envoi email de confirmation
+        
+        # Envoi d'email de confirmation
         email_service.send_email(
             to_email="user@example.com",  
             subject="Image uploaded",
             body=f"Votre image a été uploadée avec l'ID: {image_id}"
         )
+        
         return jsonify({"message": "Image uploaded successfully", "image_id": image_id}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -45,4 +53,4 @@ def get_image(image_id):
     )
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
