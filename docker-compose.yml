@@ -1,37 +1,40 @@
 services:
   mongo-db:
-    image: mongo:4.4.29   # Change ici de mongo:6 à mongo:4.4.29 pour éviter les problèmes AVX
+    image: mongo:4.4.29
     container_name: mongo-db
-    ports: ["27017:27017"]
+    ports:
+      - "27017:27017"
     volumes:
       - mongo_data:/data/db
     healthcheck:
-      test: ["CMD", "mongo", "--eval", "db.runCommand({ ping: 1 })"]  # Utilise 'mongo' au lieu de 'mongosh'
-      interval: 10s   # Augmenter l'intervalle pour donner plus de temps à MongoDB pour démarrer
-      timeout: 30s    # Augmenter le timeout si nécessaire
-      retries: 5      # Augmenter les retries pour attendre davantage avant de déclarer "unhealthy"
+      test: ["CMD", "mongo", "--eval", "db.runCommand({ ping: 1 })"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
 
   springboot-service:
-    build: ./springboot-app
+    image: wiaime/springboot-image-service:latest
     container_name: springboot-service
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://mongo-db:27017/springbootimagesdb
-      SERVER_PORT: 8080
+      SERVER_PORT: "8080"
     depends_on:
       mongo-db:
         condition: service_healthy
-    ports: ["8080:8080"]
+    ports:
+      - "8080:8080"
 
   flask-service:
-    build: ./flask-app
+    image: wiaime/flask-image-service:latest
     container_name: flask-service
     environment:
       MONGO_URI: mongodb://mongo-db:27017/image_db
-      PORT: 5000
+      PORT: "5000"
     depends_on:
       mongo-db:
         condition: service_healthy
-    ports: ["5000:5000"]
+    ports:
+      - "5000:5000"
 
 volumes:
   mongo_data:
