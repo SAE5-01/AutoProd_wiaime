@@ -1,17 +1,17 @@
 version: '3.8'
 
+services:
   mongo-db:
-    image: mongo:4.4
+    image: mongo:4.4.29   # Change ici de mongo:6 à mongo:4.4.29 pour éviter les problèmes AVX
     container_name: mongo-db
     ports: ["27017:27017"]
     volumes:
       - mongo_data:/data/db
     healthcheck:
-      test: ["CMD", "mongo", "--eval", "db.runCommand({ ping: 1 })"]
-      interval: 5s
-      timeout: 3s
-      retries: 20
-
+      test: ["CMD", "mongo", "--eval", "db.runCommand({ ping: 1 })"]  # Utilise 'mongo' au lieu de 'mongosh'
+      interval: 10s   # Augmenter l'intervalle pour donner plus de temps à MongoDB pour démarrer
+      timeout: 30s    # Augmenter le timeout si nécessaire
+      retries: 5      # Augmenter les retries pour attendre davantage avant de déclarer "unhealthy"
 
   springboot-service:
     build: ./springboot-app
