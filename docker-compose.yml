@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mongo-db:
     image: mongo:4.4.29   # Change ici de mongo:6 à mongo:4.4.29 pour éviter les problèmes AVX
