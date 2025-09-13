@@ -28,7 +28,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./flask-app
-          # si ton Dockerfile n'est pas ./flask-app/Dockerfile, ajoute: file: ./flask-app/<chemin/Dockerfile>
+          file: ./flask-app/Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/flask-image-service:latest
