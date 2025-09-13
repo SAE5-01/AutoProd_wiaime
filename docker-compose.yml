@@ -11,6 +11,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+    restart: unless-stopped
 
   springboot-service:
     image: wiaime/springboot-image-service:latest
@@ -23,10 +24,13 @@ services:
         condition: service_healthy
     ports:
       - "8080:8080"
+    restart: unless-stopped
 
   flask-service:
     image: wiaime/flask-image-service:latest
     container_name: flask-service
+    # override provisoire : on lance en Python direct pour valider l'app
+    command: ["python", "app.py"]
     environment:
       MONGO_URI: mongodb://mongo-db:27017/image_db
       PORT: "5000"
@@ -35,6 +39,7 @@ services:
         condition: service_healthy
     ports:
       - "5000:5000"
+    restart: unless-stopped
 
 volumes:
   mongo_data: {}
