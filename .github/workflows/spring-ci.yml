@@ -28,6 +28,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./springboot-app
+          file: ./flask-app/Dockerfile
           # si ton Dockerfile n'est pas ./springboot-app/Dockerfile, ajoute: file: ./springboot-app/<chemin/Dockerfile>
           push: true
           tags: |
