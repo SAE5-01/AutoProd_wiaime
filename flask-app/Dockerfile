@@ -14,7 +14,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 4) Copier le code
+# 4) Copier le code;
 COPY . .
 
 # 5) Variables d'env (tu peux les surcharger au runtime)
