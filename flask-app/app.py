@@ -7,7 +7,7 @@ from io import BytesIO
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Initialiser les services
+# Initialiser services
 image_service = ImageService(app.config['MONGO_URI'])
 email_service = EmailService(app)
 
@@ -26,16 +26,13 @@ def upload_image():
         return jsonify({"error": "No selected file"}), 400
     
     try:
-        # Upload de l'image et récupération de l'ID
         image_id = image_service.upload_image(file)
-        
-        # Envoi d'email de confirmation
+        # Envoi email de confirmation
         email_service.send_email(
             to_email="user@example.com",  
             subject="Image uploaded",
             body=f"Votre image a été uploadée avec l'ID: {image_id}"
         )
-        
         return jsonify({"message": "Image uploaded successfully", "image_id": image_id}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
